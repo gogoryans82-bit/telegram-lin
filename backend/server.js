@@ -13,7 +13,7 @@ const REDIRECT_SECONDS = parseInt(process.env.REDIRECT_SECONDS || '5', 10);
 
 // Static files
 const publicPath = path.join(__dirname, '../public');
-app.use(express.static(publicPath));
+app.use(express.static(publicPath, {index: false }));
 
 // 🔍 Debug route — shows exactly what the server sees
 app.get('/debug', (req, res) => {
