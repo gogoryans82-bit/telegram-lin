@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting to Telegram…</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23229ED9'/%3E%3Cpath d='M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z' fill='%23fff'/%3E%3C/svg%3E" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./style.css" />
-
-    <!-- Injected by server -->
     <script>
         window.APP_CONFIG = {
             telegramUrl:     "%%TELEGRAM_URL%%",
@@ -19,8 +16,15 @@
 <body>
 
     <main class="card">
-        <div class="icon-wrap" aria-hidden="true">
-            <svg class="telegram-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- ═══ STATIC LOGO (top) ═══ -->
+        <div class="brand-logo">
+            <img src="./logo.png" alt="Brand Logo" class="brand-logo-img" />
+        </div>
+
+        <!-- ═══ TELEGRAM LOGO (blue, below) ═══ -->
+        <div class="tg-wrap">
+            <svg class="tg-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
             </svg>
         </div>
@@ -28,7 +32,8 @@
         <h1 class="title">You're being redirected</h1>
         <p class="subtitle">You'll be taken to our Telegram channel in a moment</p>
 
-        <div class="countdown" aria-live="polite">
+        <!-- ═══ COUNTDOWN ═══ -->
+        <div class="countdown">
             <svg viewBox="0 0 100 100">
                 <circle class="countdown-track" cx="50" cy="50" r="45"></circle>
                 <circle class="countdown-progress" id="countdownCircle" cx="50" cy="50" r="45"></circle>
@@ -37,6 +42,7 @@
         </div>
         <p class="countdown-label" id="countdownLabel">Redirecting automatically…</p>
 
+        <!-- ═══ BUTTON ═══ -->
         <a href="#" id="telegramBtn" class="btn-telegram" role="button">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
@@ -46,9 +52,9 @@
 
         <p class="footer-note">If nothing happens, click the button above.</p>
 
-        <div class="config-warning" id="configWarning" role="alert">
+        <div class="config-warning" id="configWarning">
             <strong>⚠️ Telegram URL not configured</strong>
-            Please set the <code>TELEGRAM_URL</code> environment variable on the server.
+            Please set the <code>TELEGRAM_URL</code> environment variable.
         </div>
     </main>
 
