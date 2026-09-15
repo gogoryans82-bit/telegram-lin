@@ -23,7 +23,7 @@ app.get('/health', (req, res) => {
 
 // ─── Redirect page ───
 app.get('/', (req, res) => {
-  const templatePath = path.join(__dirname, 'public', 'redirect.html');
+  const templatePath = path.join(__dirname, 'public', 'index.html');
 
   fs.readFile(templatePath, 'utf8', (err, html) => {
     if (err) {
