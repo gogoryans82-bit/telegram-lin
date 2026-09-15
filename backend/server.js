@@ -9,9 +9,9 @@ const PORT = process.env.PORT || 3000;
 const TELEGRAM_URL = process.env.TELEGRAM_URL || '';
 const REDIRECT_SECONDS = parseInt(process.env.REDIRECT_SECONDS || '5', 10);
 
-// ─── Static assets from frontend/ ───
-const frontendPath = path.join(__dirname, '../frontend');
-app.use(express.static(frontendPath));
+// ─── Static assets from ../public/ ───
+const publicPath = path.join(__dirname, '../public');
+app.use(express.static(publicPath));
 
 // ─── Health check ───
 app.get('/health', (req, res) => {
@@ -22,9 +22,9 @@ app.get('/health', (req, res) => {
   });
 });
 
-// ─── Redirect page (injects env into frontend/index.html) ───
+// ─── Redirect page (injects env into public/index.html) ───
 app.get('/', (req, res) => {
-  const templatePath = path.join(frontendPath, 'index.html');
+  const templatePath = path.join(publicPath, 'index.html');
 
   fs.readFile(templatePath, 'utf8', (err, html) => {
     if (err) {
