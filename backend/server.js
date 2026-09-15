@@ -6,23 +6,30 @@ const fs = require('fs');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const TELEGRAM_URL = process.env.TELEGRAM_URL || '';
+
+// ✅ Hardcoded fallback — works even if env fails
+const TELEGRAM_URL = (process.env.TELEGRAM_URL || '').trim() || 'https://t.me/goodreview12';
 const REDIRECT_SECONDS = parseInt(process.env.REDIRECT_SECONDS || '5', 10);
 
-// ─── Static assets from ../public/ ───
+// Static files
 const publicPath = path.join(__dirname, '../public');
 app.use(express.static(publicPath));
 
-// ─── Health check ───
-app.get('/health', (req, res) => {
+// 🔍 Debug route — shows exactly what the server sees
+app.get('/debug', (req, res) => {
   res.json({
-    ok: true,
-    telegramUrl: TELEGRAM_URL ? 'configured' : 'MISSING',
-    redirectSeconds: REDIRECT_SECONDS
+    telegramUrl: TELEGRAM_URL,
+    envValue: process.env.TELEGRAM_URL || '(not set)',
+    usingFallback: !process.env.TELEGRAM_URL,
+    redirectSeconds: REDIRECT_SECONDS,
+    nodeVersion: process.version
   });
 });
 
-// ─── Redirect page (injects env into public/index.html) ───
+// Health check
+app.get('/health', (req, res) => res.json({ ok: true, telegramUrl: TELEGRAM_URL }));
+
+// Redirect page
 app.get('/', (req, res) => {
   const templatePath = path.join(publicPath, 'index.html');
 
@@ -42,24 +49,10 @@ app.get('/', (req, res) => {
   });
 });
 
-// ─── Fallback ───
-app.get('*', (req, res) => {
-  res.redirect('/');
-});
+app.get('*', (req, res) => res.redirect('/'));
 
-// ─── Start ───
 app.listen(PORT, () => {
-  console.log('');
-  console.log('╔════════════════════════════════════════════╗');
-  console.log('║   🚀 Telegram Redirect Server              ║');
-  console.log('╠════════════════════════════════════════════╣');
-  console.log(`║   Port:              ${PORT.toString().padEnd(22)}║`);
-  console.log(`║   Redirect delay:    ${(REDIRECT_SECONDS + 's').padEnd(22)}║`);
-  console.log(`║   Telegram URL:      ${(TELEGRAM_URL ? '✅ set' : '❌ MISSING').padEnd(22)}║`);
-  console.log('╚════════════════════════════════════════════╝');
-  console.log('');
-
-  if (!TELEGRAM_URL) {
-    console.warn('⚠️  TELEGRAM_URL is not set. The page will show a configuration warning.');
-  }
+  console.log(`🚀 Server on port ${PORT}`);
+  console.log(`📲 Telegram URL: ${TELEGRAM_URL}`);
+  console.log(`⏱️  Redirect delay: ${REDIRECT_SECONDS}s`);
 });
