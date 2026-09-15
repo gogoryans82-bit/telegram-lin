@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to Telegram…</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23229ED9'/%3E%3Cpath d='M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z' fill='%23fff'/%3E%3C/svg%3E" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --navy:          #003366;
+            --navy-light:    #004080;
+            --yellow:        #FFCB05;
+            --yellow-dark:   #E6B800;
+            --telegram:      #229ED9;
+            --telegram-dark: #1B84B8;
+            --text-dark:     #0F1A2E;
+            --text-mid:      #5a6474;
+            --text-light:    #94a0b0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(160deg, var(--navy) 0%, var(--navy-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Ambient background glow */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -20%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(34,158,217,0.15), transparent 70%);
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -20%;
+            right: -20%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(255,203,5,0.08), transparent 70%);
+            pointer-events: none;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            max-width: 460px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 52px 40px 44px;
+            text-align: center;
+            box-shadow:
+                0 20px 60px rgba(0,0,0,0.35),
+                0 0 0 1px rgba(255,255,255,0.05);
+            animation: cardIn 0.55s cubic-bezier(.22,.9,.36,1.2);
+            z-index: 1;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(24px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── Telegram icon with pulsing ring ── */
+        .icon-wrap {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 28px;
+            background: linear-gradient(135deg, var(--telegram), var(--telegram-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 12px 32px rgba(34,158,217,0.4),
+                inset 0 -4px 12px rgba(0,0,0,0.1);
+        }
+
+        .icon-wrap::before,
+        .icon-wrap::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 2px solid rgba(34,158,217,0.4);
+            animation: pulse 2.4s ease-out infinite;
+        }
+
+        .icon-wrap::after {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes pulse {
+            0%   { transform: scale(1);    opacity: 0.9; }
+            100% { transform: scale(1.35); opacity: 0; }
+        }
+
+        .telegram-svg {
+            width: 50px;
+            height: 50px;
+            fill: #ffffff;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+            animation: planeFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes planeFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50%      { transform: translateY(-4px) rotate(-3deg); }
+        }
+
+        /* ── Text ── */
+        .title {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 10px;
+            line-height: 1.25;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-mid);
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── Countdown ── */
+        .countdown {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 20px;
+        }
+
+        .countdown svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .countdown-track {
+            fill: none;
+            stroke: #eef2f7;
+            stroke-width: 7;
+        }
+
+        .countdown-progress {
+            fill: none;
+            stroke: var(--yellow);
+            stroke-width: 7;
+            stroke-linecap: round;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+            filter: drop-shadow(0 2px 4px rgba(255,203,5,0.4));
+        }
+
+        .countdown-number {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--navy);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.03em;
+        }
+
+        .countdown-label {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            margin-bottom: 32px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+        }
+
+        /* ── Telegram button ── */
+        .btn-telegram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 17px 22px;
+            background: var(--telegram);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(.22,.9,.36,1);
+            box-shadow:
+                0 6px 18px rgba(34,158,217,0.35),
+                inset 0 -2px 0 rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-telegram::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-telegram:hover::after {
+            left: 100%;
+        }
+
+        .btn-telegram:hover {
+            background: var(--telegram-dark);
+            transform: translateY(-2px);
+            box-shadow:
+                0 10px 26px rgba(34,158,217,0.45),
+                inset 0 -2px 0 rgba(0,0,0,0.1);
+        }
+
+        .btn-telegram:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(34,158,217,0.35);
+        }
+
+        .btn-telegram svg {
+            width: 20px;
+            height: 20px;
+            fill: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .btn-telegram[aria-disabled="true"] {
+            opacity: 0.45;
+            pointer-events: none;
+            filter: grayscale(0.6);
+        }
+
+        /* ── Footer note ── */
+        .footer-note {
+            margin-top: 22px;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        /* ── Config warning (shown when TELEGRAM_URL is missing) ── */
+        .config-warning {
+            display: none;
+            background: #FEF2F2;
+            border: 1.5px solid #FECACA;
+            color: #991B1B;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 20px;
+            font-size: 0.83rem;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        .config-warning.show {
+            display: block;
+            animation: shakeIn 0.4s;
+        }
+
+        .config-warning strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .config-warning code {
+            background: rgba(153,27,27,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.78rem;
+        }
+
+        @keyframes shakeIn {
+            0%, 100% { transform: translateX(0); }
+            25%      { transform: translateX(-6px); }
+            75%      { transform: translateX(6px); }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 480px) {
+            .card {
+                padding: 42px 26px 36px;
+                border-radius: 20px;
+            }
+            .title { font-size: 1.3rem; }
+            .subtitle { font-size: 0.88rem; margin-bottom: 26px; }
+            .icon-wrap { width: 84px; height: 84px; margin-bottom: 22px; }
+            .telegram-svg { width: 42px; height: 42px; }
+            .countdown { width: 92px; height: 92px; }
+            .countdown-number { font-size: 2rem; }
+            .btn-telegram { padding: 15px 18px; font-size: 0.95rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="card">
+        <div class="icon-wrap" aria-hidden="true">
+            <svg class="telegram-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+            </svg>
+        </div>
+
+        <h1 class="title">You're being redirected</h1>
+        <p class="subtitle">You'll be taken to our Telegram channel in a moment</p>
+
+        <div class="countdown" aria-live="polite">
+            <svg viewBox="0 0 100 100">
+                <circle class="countdown-track" cx="50" cy="50" r="45"></circle>
+                <circle class="countdown-progress" id="countdownCircle" cx="50" cy="50" r="45"></circle>
+            </svg>
+            <div class="countdown-number" id="countdownNum">5</div>
+        </div>
+        <p class="countdown-label" id="countdownLabel">Redirecting automatically…</p>
+
+        <a href="#" id="telegramBtn" class="btn-telegram" role="button">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+            </svg>
+            Open Telegram Now
+        </a>
+
+        <p class="footer-note">If nothing happens, click the button above.</p>
+
+        <div class="config-warning" id="configWarning" role="alert">
+            <strong>⚠️ Telegram URL not configured</strong>
+            Please set the <code>TELEGRAM_URL</code> environment variable on the server.
+        </div>
+    </main>
+
+    <script>
+        // ─────────────────────────────────────────────────────
+        // Injected by the server at request time
+        // ─────────────────────────────────────────────────────
+        const TELEGRAM_URL = "%%TELEGRAM_URL%%";
+        const REDIRECT_SECONDS = parseInt("%%REDIRECT_SECONDS%%", 10) || 5;
+
+        // ─────────────────────────────────────────────────────
+        // Elements
+        // ─────────────────────────────────────────────────────
+        const countdownNum   = document.getElementById('countdownNum');
+        const countdownCircle= document.getElementById('countdownCircle');
+        const countdownLabel = document.getElementById('countdownLabel');
+        const telegramBtn    = document.getElementById('telegramBtn');
+        const configWarning  = document.getElementById('configWarning');
+
+        // ─────────────────────────────────────────────────────
+        // State
+        // ─────────────────────────────────────────────────────
+        let secondsLeft = REDIRECT_SECONDS;
+        let redirected  = false;
+        let timer       = null;
+
+        const isConfigured =
+            TELEGRAM_URL &&
+            TELEGRAM_URL !== '%%TELEGRAM_URL%%' &&
+            /^https?:\/\//i.test(TELEGRAM_URL.trim());
+
+        // ─────────────────────────────────────────────────────
+        // Bootstrap
+        // ─────────────────────────────────────────────────────
+        if (!isConfigured) {
+            showConfigWarning();
+        } else {
+            telegramBtn.href = TELEGRAM_URL;
+            telegramBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                redirectNow();
+            });
+
+            countdownNum.textContent = secondsLeft;
+            updateCircle();
+            startCountdown();
+        }
+
+        // ─────────────────────────────────────────────────────
+        // Countdown loop
+        // ─────────────────────────────────────────────────────
+        function startCountdown() {
+            timer = setInterval(() => {
+                secondsLeft--;
+                countdownNum.textContent = secondsLeft;
+                updateCircle();
+
+                if (secondsLeft <= 0) {
+                    clearInterval(timer);
+                    redirectNow();
+                }
+            }, 1000);
+        }
+
+        function updateCircle() {
+            const progress = (REDIRECT_SECONDS - secondsLeft) / REDIRECT_SECONDS;
+            countdownCircle.style.strokeDashoffset = (283 * progress).toString();
+        }
+
+        // ─────────────────────────────────────────────────────
+        // Redirect
+        // ─────────────────────────────────────────────────────
+        function redirectNow() {
+            if (redirected || !isConfigured) return;
+            redirected = true;
+            clearInterval(timer);
+
+            // Small visual feedback
+            countdownLabel.textContent = 'Redirecting now…';
+
+            window.location.href = TELEGRAM_URL;
+        }
+
+        // ─────────────────────────────────────────────────────
+        // Missing config
+        // ─────────────────────────────────────────────────────
+        function showConfigWarning() {
+            configWarning.classList.add('show');
+            telegramBtn.setAttribute('aria-disabled', 'true');
+            telegramBtn.style.opacity = '0.5';
+            telegramBtn.style.pointerEvents = 'none';
+            countdownNum.textContent = '—';
+            countdownLabel.textContent = 'Waiting for configuration…';
+        }
+    </script>
+</body>
+</html>
