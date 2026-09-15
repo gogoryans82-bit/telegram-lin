@@ -9,8 +9,9 @@ const PORT = process.env.PORT || 3000;
 const TELEGRAM_URL = process.env.TELEGRAM_URL || '';
 const REDIRECT_SECONDS = parseInt(process.env.REDIRECT_SECONDS || '5', 10);
 
-// Serve static assets from /public (if you later add CSS/JS files)
-app.use(express.static(path.join(__dirname, 'public')));
+// ─── Static assets from frontend/ ───
+const frontendPath = path.join(__dirname, '../frontend');
+app.use(express.static(frontendPath));
 
 // ─── Health check ───
 app.get('/health', (req, res) => {
@@ -21,17 +22,16 @@ app.get('/health', (req, res) => {
   });
 });
 
-// ─── Redirect page ───
+// ─── Redirect page (injects env into frontend/index.html) ───
 app.get('/', (req, res) => {
-  const templatePath = path.join(__dirname, 'public', 'index.html');
+  const templatePath = path.join(frontendPath, 'index.html');
 
   fs.readFile(templatePath, 'utf8', (err, html) => {
     if (err) {
-      console.error('❌ Failed to read redirect.html:', err);
+      console.error('❌ Failed to read index.html:', err);
       return res.status(500).send('Redirect page not found.');
     }
 
-    // Replace placeholders with env values
     const rendered = html
       .replace(/%%TELEGRAM_URL%%/g, TELEGRAM_URL)
       .replace(/%%REDIRECT_SECONDS%%/g, REDIRECT_SECONDS.toString());
@@ -42,12 +42,12 @@ app.get('/', (req, res) => {
   });
 });
 
-// ─── Fallback (redirect all other routes to /) ───
+// ─── Fallback ───
 app.get('*', (req, res) => {
   res.redirect('/');
 });
 
-// ─── Start server ───
+// ─── Start ───
 app.listen(PORT, () => {
   console.log('');
   console.log('╔════════════════════════════════════════════╗');
@@ -61,6 +61,5 @@ app.listen(PORT, () => {
 
   if (!TELEGRAM_URL) {
     console.warn('⚠️  TELEGRAM_URL is not set. The page will show a configuration warning.');
-    console.warn('   Set it in your .env file or Render environment variables.');
   }
 });
